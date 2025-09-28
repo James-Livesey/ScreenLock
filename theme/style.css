@@ -1,0 +1,24 @@
+.rootGrid {
+    background-color: green;
+    color: yellow;
+}
+
+.passwordEntry {
+    padding-bottom: 0.5rem;
+    background-color: transparent;
+    color: white;
+    border: none;
+    outline: none;
+    font-family: monospace;
+}
+
+.messageBox {
+    border: 2px solid red;
+    padding: 1rem;
+}
+
+.messageTitle {
+    padding-bottom: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+}

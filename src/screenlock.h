@@ -1,16 +1,12 @@
 #ifndef SCREENLOCK_H_
 #define SCREENLOCK_H_
 
-#include <gtkmm/window.h>
-#include <gtkmm/box.h>
-#include <gtkmm/grid.h>
-#include <gtkmm/label.h>
-#include <gtkmm/passwordentry.h>
+#include <gtkmm.h>
 
 class ScreenLock : public Gtk::Window {
     public:
         ScreenLock();
-        ~ScreenLock() override {}
+        ~ScreenLock() noexcept override {}
 
     protected:
         Gtk::Grid _rootGrid;
@@ -19,6 +15,10 @@ class ScreenLock : public Gtk::Window {
         Gtk::Label _messageTitle;
         Gtk::Label _messageBody;
         Gtk::PasswordEntry _passwordEntry;
+
+        Glib::RefPtr<Gtk::CssProvider> _cssProviderRef;
+
+        void onResize();
 };
 
 #endif
