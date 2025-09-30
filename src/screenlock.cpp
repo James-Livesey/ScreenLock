@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "screenlock.h"
 
 ScreenLock::ScreenLock() :
@@ -13,7 +15,7 @@ _passwordEntry() {
 
     _cssProviderRef->load_from_path("theme/style.css");
 
-    _messageFile.open("/home/james/.screenlock");
+    _messageFile.open(std::string(getenv("HOME")) + "/.screenlock");
 
     std::string title;
 
