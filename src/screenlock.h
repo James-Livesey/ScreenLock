@@ -1,6 +1,7 @@
 #ifndef SCREENLOCK_H_
 #define SCREENLOCK_H_
 
+#include <fstream>
 #include <gtkmm.h>
 
 class ScreenLock : public Gtk::Window {
@@ -17,6 +18,8 @@ class ScreenLock : public Gtk::Window {
         Gtk::PasswordEntry _passwordEntry;
 
         Glib::RefPtr<Gtk::CssProvider> _cssProviderRef;
+
+        std::ifstream _messageFile;
 
         void onResize();
 };

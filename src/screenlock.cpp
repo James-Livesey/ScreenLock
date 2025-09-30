@@ -4,14 +4,25 @@ ScreenLock::ScreenLock() :
 _rootGrid(),
 _messageBox(),
 _messageGrid(),
-_messageTitle("This is a test"),
-_messageBody("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus lectus libero, at faucibus felis blandit quis. Interdum et malesuada fames ac ante ipsum primis in faucibus.\n\nInteger ornare id purus vitae suscipit."),
+_messageTitle(""),
+_messageBody(""),
 _passwordEntry() {
     _cssProviderRef = Gtk::CssProvider::create();
 
     Gtk::StyleContext::add_provider_for_display(get_display(), _cssProviderRef, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
     _cssProviderRef->load_from_path("theme/style.css");
+
+    _messageFile.open("/home/james/.screenlock");
+
+    std::string title;
+
+    std::getline(_messageFile, title);
+
+    std::string body {std::istreambuf_iterator<char>(_messageFile), std::istreambuf_iterator<char>()};
+
+    _messageTitle.set_text(title);
+    _messageBody.set_text(body);
 
     _messageTitle.add_css_class("messageTitle");
     _messageTitle.set_wrap(true);
