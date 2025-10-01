@@ -18,10 +18,12 @@ class ScreenLock : public Gtk::Window {
         Gtk::PasswordEntry _passwordEntry;
 
         Glib::RefPtr<Gtk::CssProvider> _cssProviderRef;
+        Glib::RefPtr<Gtk::EventControllerKey> _passwordEntryControllerKey;
 
         std::ifstream _messageFile;
 
         void onResize();
+        bool onPasswordEntry(guint keyval, guint keycode, Gdk::ModifierType state);
 };
 
 #endif

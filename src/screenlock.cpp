@@ -55,6 +55,13 @@ _passwordEntry() {
     fullscreen();
 
     property_default_width().signal_changed().connect(sigc::mem_fun(*this, &ScreenLock::onResize));
+
+    _passwordEntryControllerKey = Gtk::EventControllerKey::create();
+
+    _passwordEntryControllerKey->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    _passwordEntryControllerKey->signal_key_pressed().connect(sigc::mem_fun(*this, &ScreenLock::onPasswordEntry), false);
+
+    _passwordEntry.add_controller(_passwordEntryControllerKey);
 }
 
 void ScreenLock::onResize() {
@@ -72,4 +79,14 @@ void ScreenLock::onResize() {
 
     _messageBox.property_margin_start().set_value((geometry.get_width() - desiredWidth) / 2);
     _messageBox.property_margin_end().set_value((geometry.get_width() - desiredWidth) / 2);
+}
+
+bool ScreenLock::onPasswordEntry(guint keyval, guint keycode, Gdk::ModifierType state) {
+    if (keyval == GDK_KEY_Return || keyval == GDK_KEY_KP_Enter) {
+        close();
+
+        return true;
+    }
+
+    return false;
 }
