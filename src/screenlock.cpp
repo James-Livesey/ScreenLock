@@ -1,6 +1,15 @@
+#include <experimental/filesystem>
 #include <stdlib.h>
 
 #include "screenlock.h"
+
+std::string getBasePath() {
+    char result[PATH_MAX];
+
+    ssize_t length = readlink("/proc/self/exe", result, PATH_MAX);
+
+    return std::string(result, length > 0 ? length : 0);
+}
 
 ScreenLock::ScreenLock() :
 _rootGrid(),
@@ -13,7 +22,9 @@ _passwordEntry() {
 
     Gtk::StyleContext::add_provider_for_display(get_display(), _cssProviderRef, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-    _cssProviderRef->load_from_path("theme/style.css");
+    std::string path = getBasePath();
+
+    _cssProviderRef->load_from_path(path.substr(0, path.find_last_of("/")) + "/theme/style.css");
 
     _messageFile.open(std::string(getenv("HOME")) + "/.screenlock");
 
