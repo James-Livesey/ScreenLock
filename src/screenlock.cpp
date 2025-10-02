@@ -1,5 +1,8 @@
 #include <experimental/filesystem>
 #include <stdlib.h>
+#include <pwd.h>
+#include <shadow.h>
+#include <crypt.h>
 
 #include "screenlock.h"
 
@@ -11,6 +14,12 @@ std::string getBasePath() {
     return std::string(result, length > 0 ? length : 0);
 }
 
+std::string getUsername() {
+    char* userString = getenv("SUDO_USER");
+
+    return std::string(userString ? userString : "");
+}
+
 ScreenLock::ScreenLock() :
 _rootGrid(),
 _messageBox(),
@@ -18,6 +27,8 @@ _messageGrid(),
 _messageTitle(""),
 _messageBody(""),
 _passwordEntry() {
+    setuid(0);
+
     _cssProviderRef = Gtk::CssProvider::create();
 
     Gtk::StyleContext::add_provider_for_display(get_display(), _cssProviderRef, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -26,7 +37,7 @@ _passwordEntry() {
 
     _cssProviderRef->load_from_path(path.substr(0, path.find_last_of("/")) + "/theme/style.css");
 
-    _messageFile.open(std::string(getenv("HOME")) + "/.screenlock");
+    _messageFile.open("/home/" + getUsername() + "/.screenlock");
 
     std::string title;
 
@@ -75,6 +86,37 @@ _passwordEntry() {
     _passwordEntry.add_controller(_passwordEntryControllerKey);
 }
 
+bool ScreenLock::checkPassword(std::string password) {
+    const char* username = getUsername().c_str();
+    struct passwd* entry = getpwnam(username);
+
+    if (!entry) {
+        printf("User does not exist; exiting anyway\n");
+
+        return true;
+    }
+
+    std::string hash = entry->pw_passwd;
+
+    if (hash == "x" || hash == "*") {
+        // Check shadow file
+
+        struct spwd* shadowEntry = getspnam(username);
+
+        if (!shadowEntry) {
+            printf("Could not read shadow file; exiting anyway\n");
+
+            return true;
+        }
+
+        std::string shadowHash = shadowEntry->sp_pwdp;
+
+        return crypt(password.c_str(), shadowHash.c_str()) == shadowHash;
+    } else {
+        return crypt(password.c_str(), hash.c_str()) == hash;
+    }
+}
+
 void ScreenLock::onResize() {
     auto display = Gdk::Display::get_default();
 
@@ -94,7 +136,12 @@ void ScreenLock::onResize() {
 
 bool ScreenLock::onPasswordEntry(guint keyval, guint keycode, Gdk::ModifierType state) {
     if (keyval == GDK_KEY_Return || keyval == GDK_KEY_KP_Enter) {
-        close();
+        if (checkPassword(_passwordEntry.get_text())) {
+            close();
+        } else {
+            _passwordEntry.property_placeholder_text().set_value("Incorrect password; try again");
+            _passwordEntry.set_text("");
+        }
 
         return true;
     }

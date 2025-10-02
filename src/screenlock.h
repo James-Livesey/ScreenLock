@@ -22,6 +22,8 @@ class ScreenLock : public Gtk::Window {
 
         std::ifstream _messageFile;
 
+        bool checkPassword(std::string password);
+
         void onResize();
         bool onPasswordEntry(guint keyval, guint keycode, Gdk::ModifierType state);
 };

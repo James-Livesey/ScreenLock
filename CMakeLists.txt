@@ -11,4 +11,4 @@ file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*.cpp)
 
 add_executable(ScreenLock ${SOURCE_FILES})
 target_include_directories(ScreenLock PRIVATE src)
-target_link_libraries(ScreenLock ${GTKMM_LIBRARIES})
+target_link_libraries(ScreenLock ${GTKMM_LIBRARIES} crypt)
