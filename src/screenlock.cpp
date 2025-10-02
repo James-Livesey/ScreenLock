@@ -27,8 +27,6 @@ _messageGrid(),
 _messageTitle(""),
 _messageBody(""),
 _passwordEntry() {
-    setuid(0);
-
     _cssProviderRef = Gtk::CssProvider::create();
 
     Gtk::StyleContext::add_provider_for_display(get_display(), _cssProviderRef, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
