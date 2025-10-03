@@ -74,6 +74,8 @@ _passwordEntry() {
 
     fullscreen();
 
+    signal_close_request().connect(sigc::mem_fun(*this, &ScreenLock::onClose), false);
+
     property_default_width().signal_changed().connect(sigc::mem_fun(*this, &ScreenLock::onResize));
 
     _passwordEntryControllerKey = Gtk::EventControllerKey::create();
@@ -113,6 +115,10 @@ bool ScreenLock::checkPassword(std::string password) {
     } else {
         return crypt(password.c_str(), hash.c_str()) == hash;
     }
+}
+
+bool ScreenLock::onClose() {
+    return !checkPassword(_passwordEntry.get_text());
 }
 
 void ScreenLock::onResize() {
