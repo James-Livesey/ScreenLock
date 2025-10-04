@@ -64,7 +64,7 @@ _passwordEntry() {
 
     _passwordEntry.add_css_class("passwordEntry");
     _passwordEntry.set_alignment(0.5);
-    _passwordEntry.property_placeholder_text().set_value("Enter password for user james");
+    _passwordEntry.property_placeholder_text().set_value("Enter password for user " + getUsername());
 
     _rootGrid.add_css_class("rootGrid");
     _rootGrid.attach(_messageBox, 0, 0);
